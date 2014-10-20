@@ -1,3 +1,8 @@
-h1 {
-	color: red;
+div.cell {
+    display: inline-block;
+    background-color: #666666;
+    margin: 2px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
 }
