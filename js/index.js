@@ -9,18 +9,23 @@ var constants = {
     HARD_WIDTH: 30,
     HARD_HEIGHT: 16
 }
-
+var gameOver = false;
 var gameSection = document.getElementById("game");
 var cells = [];
+var width, height;
 
 function displayBoard() {
     if (document.getElementById("easy").checked) {
-        generateBoard(constants.EASY_WIDTH, constants.EASY_HEIGHT);
+        width = constants.EASY_WIDTH;
+        height = constants.EASY_HEIGHT;
     } else if (document.getElementById("medium").checked) {
-        generateBoard(constants.MEDIUM_WIDTH, constants.MEDIUM_HEIGHT);
+        width = constants.MEDIUM_WIDTH;
+        height = constants.MEDIUM_HEIGHT;
     } else {
-        generateBoard(constants.HARD_WIDTH, constants.HARD_HEIGHT);
+        width = constants.HARD_WIDTH;
+        height = constants.HARD_HEIGHT;
     }
+    generateBoard(width, height);
 }
 
 function generateBoard(width, height) {
@@ -44,96 +49,57 @@ function clearBoard(ele) {
 }
 
 function startGame(event) {
-    var difficulty = document.querySelector("input[type=radio]:checked").id;
     var clickedIndex = cells.indexOf(event.target);
     cells.forEach(function(ele) {
         ele.removeEventListener("click", startGame);
         ele.addEventListener("click", function(event) {
-            console.log(event.target.value);
+            event.target.innerHTML = event.target.value;
         });
     });
     event.target.value = 0; //set the first clicked cell to safe
-    setBomb(difficulty, clickedIndex);
+    event.target.innerHTML = event.target.value;
+    setBomb(clickedIndex);
 }
 
-
-function setBomb(difficulty, index) {
-    defuseSurrounding(difficulty, index);
-    setRandomBomb(difficulty, index);
-    cells.forEach(function(cell){
-    	if(cell.value === undefined){
-    		cell.value = 0;
-    	}
+function setBomb(index) {
+    var difficulty = document.querySelector("input[type=radio]:checked").id;
+    defuseSurrounding(index); //defuse all the cells surrounded first cell
+    if (difficulty === "easy") {
+        setRandomBomb(constants.EASY_BOMB_AMOUNT, index);
+    } else if (difficulty === "medium") {
+        setRandomBomb(constants.MEDIUM_BOMB_AMOUNT, index);
+    } else {
+        setRandomBomb(constants.HARD_BOMB_AMOUNT, index);
+    }
+    //Set all the rest cells to safe cell
+    cells.forEach(function(cell) {
+        if (cell.value === undefined) {
+            cell.value = 0;
+        }
     });
 }
 
-function defuseSurrounding(difficulty, index) {
-    if (difficulty === "easy") {
-        var UPPER_LIMIT = (constants.EASY_WIDTH * constants.EASY_HEIGHT) - 1;
-        if (index - constants.EASY_WIDTH - 1 > 0) cells[index - constants.EASY_WIDTH - 1].value = 0;
-        if (index - constants.EASY_WIDTH > 0) cells[index - constants.EASY_WIDTH].value = 0;
-        if (index - constants.EASY_WIDTH + 1 > 0) cells[index - constants.EASY_WIDTH + 1].value = 0;
-        if (index - 1 > 0) cells[index - 1].value = 0;
-        if (index + 1 < UPPER_LIMIT) cells[index + 1].value = 0;
-        if (index + constants.EASY_WIDTH - 1 < UPPER_LIMIT) cells[index + constants.EASY_WIDTH - 1].value = 0;
-        if (index + constants.EASY_WIDTH < UPPER_LIMIT) cells[index + constants.EASY_WIDTH].value = 0;
-        if (index + constants.EASY_WIDTH + 1 < UPPER_LIMIT) cells[index + constants.EASY_WIDTH + 1].value = 0;
-    } else if (difficulty === "medium") {
-        var UPPER_LIMIT = (constants.MEDIUM_WIDTH * constants.MEDIUM_HEIGHT) - 1;
-        if (index - constants.MEDIUM_WIDTH - 1 > 0) cells[index - constants.MEDIUM_WIDTH - 1].value = 0;
-        if (index - constants.MEDIUM_WIDTH > 0) cells[index - constants.MEDIUM_WIDTH].value = 0;
-        if (index - constants.MEDIUM_WIDTH + 1 > 0) cells[index - constants.MEDIUM_WIDTH + 1].value = 0;
-        if (index - 1 > 0) cells[index - 1].value = 0;
-        if (index + 1 < UPPER_LIMIT) cells[index + 1].value = 0;
-        if (index + constants.MEDIUM_WIDTH - 1 < UPPER_LIMIT) cells[index + constants.MEDIUM_WIDTH - 1].value = 0;
-        if (index + constants.MEDIUM_WIDTH < UPPER_LIMIT) cells[index + constants.MEDIUM_WIDTH].value = 0;
-        if (index + constants.MEDIUM_WIDTH + 1 < UPPER_LIMIT) cells[index + constants.MEDIUM_WIDTH + 1].value = 0;
-    } else {
-        var UPPER_LIMIT = (constants.HARD_WIDTH * constants.HARD_HEIGHT) - 1;
-        if (index - constants.HARD_WIDTH - 1 > 0) cells[index - constants.HARD_WIDTH - 1].value = 0;
-        if (index - constants.HARD_WIDTH > 0) cells[index - constants.HARD_WIDTH].value = 0;
-        if (index - constants.HARD_WIDTH + 1 > 0) cells[index - constants.HARD_WIDTH + 1].value = 0;
-        if (index - 1 > 0) cells[index - 1].value = 0;
-        if (index + 1 < UPPER_LIMIT) cells[index + 1].value = 0;
-        if (index + constants.HARD_WIDTH - 1 < UPPER_LIMIT) cells[index + constants.HARD_WIDTH - 1].value = 0;
-        if (index + constants.HARD_WIDTH < UPPER_LIMIT) cells[index + constants.HARD_WIDTH].value = 0;
-        if (index + constants.HARD_WIDTH + 1 < UPPER_LIMIT) cells[index + constants.HARD_WIDTH + 1].value = 0;
-    }
+function defuseSurrounding(index) {
+    var UPPER_LIMIT = (width * height) - 1;
+    if (index - width - 1 >= 0) cells[index - width - 1].value = 0;
+    if (index - width >= 0) cells[index - width].value = 0;
+    if (index - width + 1 >= 0) cells[index - width + 1].value = 0;
+    if (index - 1 >= 0) cells[index - 1].value = 0;
+    if (index + 1 <= UPPER_LIMIT) cells[index + 1].value = 0;
+    if (index + width - 1 <= UPPER_LIMIT) cells[index + width - 1].value = 0;
+    if (index + width <= UPPER_LIMIT) cells[index + width].value = 0;
+    if (index + width + 1 <= UPPER_LIMIT) cells[index + width + 1].value = 0;
 }
 
-function setRandomBomb(difficulty, index) {
-    if (difficulty === "easy") {
-    	var UPPER_LIMIT = (constants.EASY_WIDTH * constants.EASY_HEIGHT);
-        for (i = 0; i < constants.EASY_BOMB_AMOUNT;) {
-            var index = Math.floor(Math.random() * UPPER_LIMIT);
-            if(cells[index].value === undefined){
-            	cells[index].value = 1;
-            	i++;
-            }else{
-            	continue;
-            }
-        }
-    } else if (difficulty === "easy") {
-    	var UPPER_LIMIT = (constants.MEDIUM_WIDTH * constants.MEDIUM_HEIGHT);
-        for (i = 0; i < constants.MEDIUM_BOMB_AMOUNT;) {
-            var index = Math.floor(Math.random() * UPPER_LIMIT);
-            if(cells[index].value === undefined){
-            	cells[index].value = 1;
-            	i++;
-            }else{
-            	continue;
-            }
-        }
-    } else {
-    	var UPPER_LIMIT = (constants.HARD_WIDTH * constants.HARD_HEIGHT);
-        for (i = 0; i < constants.HARD_BOMB_AMOUNT;) {
-            var index = Math.floor(Math.random() * UPPER_LIMIT);
-            if(cells[index].value === undefined){
-            	cells[index].value = 1;
-            	i++;
-            }else{
-            	continue;
-            }
+function setRandomBomb(maxBomb, index) {
+    var UPPER_LIMIT = (width * height);
+    for (i = 0; i < maxBomb;) {
+        var index = Math.floor(Math.random() * UPPER_LIMIT);
+        if (cells[index].value === undefined) {
+            cells[index].value = 1;
+            i++;
+        } else {
+            continue;
         }
     }
 }
@@ -141,6 +107,6 @@ function setRandomBomb(difficulty, index) {
 document.getElementById("newGame").addEventListener("click", function() {
     clearBoard(gameSection);
     displayBoard();
-})
+});
 
 displayBoard();
