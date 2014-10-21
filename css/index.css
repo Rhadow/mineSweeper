@@ -1,19 +1,60 @@
+body {
+    background-color: #607b8b;
+    /* #a4bf7f */
+    
+    text-align: center;
+}
+.intro {
+    text-align: center;
+    color: #CCC;
+}
+h1 {
+    padding: 2%;
+    font-family: Impact;
+    font-size: 3.5em;
+    font-weight: bold;
+}
+section.game-wrapper {
+    margin: 2.5%;
+}
 div.cell {
     display: inline-block;
-    background-color: #ccc;
+    background-color: #837e7c;
     margin: 2px;
     width: 30px;
     height: 30px;
     cursor: pointer;
-    text-align: center;
     vertical-align: middle;
     line-height: 30px;
+    box-shadow: 1.5px 1.5px #222222;
 }
-
-div.clicked{
-	background-color: #999;
+div.clicked {
+    background-color: #888888;
+    box-shadow: none;
 }
-
 div#gameOver {
-	display: inline-block;
+    display: inline-block;
+}
+section#game {
+    margin-top: 2%;
+}
+div.bomb {
+    background-color: #dc381f;
+    font-weight: bold;
+    box-shadow: none;
+}
+div.flag {
+    background-color: #3da3a2;
+    font-weight: bold;
+    box-shadow: none;
+}
+div.wrong {
+    background-color: #f2b636;
+    font-weight: bold;
+    box-shadow: none;
+}
+div#gameOver {
+    color: #f2b636;
+    font-weight: bold;
+    font-size: 3em;
 }
