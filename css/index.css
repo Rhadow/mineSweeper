@@ -1,6 +1,6 @@
 div.cell {
     display: inline-block;
-    background-color: #999999;
+    background-color: #ccc;
     margin: 2px;
     width: 30px;
     height: 30px;
@@ -8,4 +8,12 @@ div.cell {
     text-align: center;
     vertical-align: middle;
     line-height: 30px;
+}
+
+div.clicked{
+	background-color: #999;
+}
+
+div#gameOver {
+	display: inline-block;
 }
